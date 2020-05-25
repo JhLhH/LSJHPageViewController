@@ -22,7 +22,7 @@ pod 'LSJHPageViewController'
 
 ## Author
 
-YxhHLi@163.com, ljh@weiyian.com
+YxhHLi@163.com, ljh
 
 ## License
 
