@@ -1,13 +1,13 @@
 //
-//  WYAPageScrollView.m
+//  LLPageScrollView.m
 //  FMDB
 //
 //  Created by 李俊恒 on 2018/11/14.
 //
 
-#import "WYAPageScrollView.h"
+#import "LLPageScrollView.h"
 
-@implementation WYAPageScrollView
+@implementation LLPageScrollView
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
 shouldRequireFailureOfGestureRecognizer:(nonnull UIGestureRecognizer *)otherGestureRecognizer

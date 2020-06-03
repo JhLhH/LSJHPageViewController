@@ -248,6 +248,9 @@
 				LastUpgradeCheck = 0720;
 				ORGANIZATIONNAME = "YxhHLi@163.com";
 				TargetAttributes = {
+					6003F589195388D20070C39A = {
+						DevelopmentTeam = J5265ZP7QT;
+					};
 					6003F5AD195388D20070C39A = {
 						TestTargetID = 6003F589195388D20070C39A;
 					};
@@ -345,7 +348,6 @@
 				"${PODS_ROOT}/Target Support Files/Pods-LSJHPageViewController_Example/Pods-LSJHPageViewController_Example-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/CocoaLumberjack/CocoaLumberjack.framework",
 				"${BUILT_PRODUCTS_DIR}/LSJHCategory/LSJHCategory.framework",
-				"${BUILT_PRODUCTS_DIR}/LSJHNavBar/LSJHNavBar.framework",
 				"${BUILT_PRODUCTS_DIR}/LSJHPageViewController/LSJHPageViewController.framework",
 				"${BUILT_PRODUCTS_DIR}/Masonry/Masonry.framework",
 				"${BUILT_PRODUCTS_DIR}/SVGKit/SVGKit.framework",
@@ -355,7 +357,6 @@
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CocoaLumberjack.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/LSJHCategory.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/LSJHNavBar.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/LSJHPageViewController.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Masonry.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SVGKit.framework",
@@ -525,6 +526,7 @@
 			baseConfigurationReference = 69FD845287809DDD758204EC /* Pods-LSJHPageViewController_Example.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = J5265ZP7QT;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "LSJHPageViewController/LSJHPageViewController-Prefix.pch";
 				INFOPLIST_FILE = "LSJHPageViewController/LSJHPageViewController-Info.plist";
@@ -542,6 +544,7 @@
 			baseConfigurationReference = D4FC0D0E1C9D203BB0998028 /* Pods-LSJHPageViewController_Example.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = J5265ZP7QT;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "LSJHPageViewController/LSJHPageViewController-Prefix.pch";
 				INFOPLIST_FILE = "LSJHPageViewController/LSJHPageViewController-Info.plist";

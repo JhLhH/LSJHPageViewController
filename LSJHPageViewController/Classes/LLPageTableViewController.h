@@ -1,43 +1,44 @@
 //
-//  WYAPageController.h
-//  FMDB
+//  LLPageTableViewController.h
+//  CocoaLumberjack
 //
-//  Created by 李俊恒 on 2018/11/14.
+//  Created by 李俊恒 on 2018/11/23.
 //
 
-#import "WYAMenuView.h"
-#import <LSJHNavBar/LLNavBar.h>
-#import "WYAPageScrollView.h"
+#import "LLMenuView.h"
+#import "LLPageScrollView.h"
 #import <UIKit/UIKit.h>
-@class WYAPageController;
+@class LLPageTableViewController;
 /*
- *  WYAPageController 的缓存设置，默认缓存为无限制，当收到 memoryWarning 时，会自动切换到低缓存模式
- (WYAPageControllerCachePolicyLowMemory)，并在一段时间后切换到 High .
- 收到多次警告后，会停留在到 WYAPageControllerCachePolicyLowMemory 不再增长
+ *  LLPageController 的缓存设置，默认缓存为无限制，当收到 memoryWarning 时，会自动切换到低缓存模式
+ (LLPageControllerCachePolicyLowMemory)，并在一段时间后切换到 High .
+ 收到多次警告后，会停留在到 LLPageControllerCachePolicyLowMemory 不再增长
  *
  *  The Default cache policy is No Limit, when recieved memory warning, page controller will switch
  mode to 'LowMemory'
  and continue to grow back after a while.
  If recieved too much times, the cache policy will stay at 'LowMemory' and don't grow back any more.
  */
-typedef NS_ENUM(NSInteger, WYAPageControllerCachePolicy) {
-    WYAPageControllerCachePolicyDisabled  = -1, // Disable Cache
-    WYAPageControllerCachePolicyNoLimit   = 0,  // No limit
-    WYAPageControllerCachePolicyLowMemory = 1,  // Low Memory but may block when scroll
-    WYAPageControllerCachePolicyBalanced  = 3,  // Balanced ↑ and ↓
-    WYAPageControllerCachePolicyHigh      = 5   // High
+typedef NS_ENUM(NSInteger, LLPageTableControllerCachePolicy) {
+    LLPageTableControllerCachePolicyDisabled  = -1, // Disable Cache
+    LLPageTableControllerCachePolicyNoLimit   = 0,  // No limit
+    LLPageTableControllerCachePolicyLowMemory = 1,  // Low Memory but may block when scroll
+    LLPageTableControllerCachePolicyBalanced  = 3,  // Balanced ↑ and ↓
+    LLPageTableControllerCachePolicyHigh      = 5   // High
 };
 
-typedef NS_ENUM(NSUInteger, WYAPageControllerPreloadPolicy) {
-    WYAPageControllerPreloadPolicyNever     = 0, // Never pre-load controller.
-    WYAPageControllerPreloadPolicyNeighbour = 1, // Pre-load the controller next to the current.
-    WYAPageControllerPreloadPolicyNear      = 2  // Pre-load 2 controllers near the current.
+typedef NS_ENUM(NSUInteger, LLPageTableControllerPreloadPolicy) {
+    LLPageTableControllerPreloadPolicyNever = 0, // Never pre-load controller.
+    LLPageTableControllerPreloadPolicyNeighbour =
+    1,                                          // Pre-load the controller next to the current.
+    LLPageTableControllerPreloadPolicyNear = 2 // Pre-load 2 controllers near the current.
 };
 
 NS_ASSUME_NONNULL_BEGIN
-extern NSString * const WYAControllerDidAddToSuperViewNotification;
-extern NSString * const WYAControllerDidFullyDisplayedNotification;
-@protocol WYAPageControllerDataSource <NSObject>
+extern NSString * const LLTableControllerDidAddToSuperViewNotification;
+extern NSString * const LLTableControllerDidFullyDisplayedNotification;
+extern NSString * const LLTabControllerChildControllerChangeContentOffstNotification;
+@protocol LLPageTableControllerDataSource <NSObject>
 @optional
 
 /**
@@ -46,7 +47,8 @@ extern NSString * const WYAControllerDidFullyDisplayedNotification;
  @param pageController parentController
  @return child controllers's count
  */
-- (NSInteger)wya_numbersOfChildControllersInPageController:(WYAPageController *)pageController;
+- (NSInteger)ll_numbersOfChildControllersInPageController:
+(LLPageTableViewController *)pageController;
 
 /**
  返回要在索引处显示的控制器。如果实现了这些方法，就可以轻松地设置属性。
@@ -55,17 +57,18 @@ extern NSString * const WYAControllerDidFullyDisplayedNotification;
  @param index index of child Controller
  @return UIViewController instance
  */
-- (__kindof UIViewController *)wya_pageController:(WYAPageController *)pageController
+- (__kindof UIViewController *)ll_pageController:(LLPageTableViewController *)pageController
                             viewControllerAtIndex:(NSInteger)index;
 
 /**
- WYAMenuView中显示的每个标题
+ LLMenuView中显示的每个标题
 
  @param pageController parentController
  @param index index of title
- @return WYAPageController 顶部显示的 NSString的值
+ @return LLPageController 顶部显示的 NSString的值
  */
-- (NSString *)wya_pageController:(WYAPageController *)pageController titleAtIndex:(NSInteger)index;
+- (NSString *)ll_pageController:(LLPageTableViewController *)pageController
+                    titleAtIndex:(NSInteger)index;
 
 @required
 
@@ -76,8 +79,8 @@ extern NSString * const WYAControllerDidFullyDisplayedNotification;
  @param contentView contentView 每个都是子控制器的父视图
  @return contentView 的frame
  */
-- (CGRect)wya_pageController:(WYAPageController *)pageController
-   preferredFrameContentView:(WYAPageScrollView *)contentView;
+- (CGRect)ll_pageController:(LLPageTableViewController *)pageController
+   preferredFrameContentView:(LLPageScrollView *)contentView;
 
 /**
  实现此数据源方法，以便自定义您自己的MenuView的frame
@@ -86,11 +89,11 @@ extern NSString * const WYAControllerDidFullyDisplayedNotification;
  @param menuView 菜单视图
  @return menuView的frane
  */
-- (CGRect)wya_pageController:(WYAPageController *)pageController
-   preferredFrameForMenuView:(WYAMenuView *)menuView;
+- (CGRect)ll_pageController:(LLPageTableViewController *)pageController
+   preferredFrameForMenuView:(LLMenuView *)menuView;
 @end
 
-@protocol WYAPageControllerDelegate <NSObject>
+@protocol LLPageTableControllerDelegate <NSObject>
 
 @optional
 
@@ -101,7 +104,7 @@ extern NSString * const WYAControllerDidFullyDisplayedNotification;
  @param viewController 视图控制器在滚动停止时首先出现。
  @param info A dictionary that includes some infos, such as: `index` / `title`
  */
-- (void)wya_pageController:(WYAPageController *)pageController
+- (void)ll_pageController:(LLPageTableViewController *)pageController
     lazyLoadViewController:(__kindof UIViewController *)viewController
                   withInfo:(NSDictionary *)info;
 
@@ -112,7 +115,7 @@ extern NSString * const WYAControllerDidFullyDisplayedNotification;
  @param viewController viewController 会被缓存
  @param info  A dictionary that includes some infos, such as: `index` / `title`
  */
-- (void)wya_pageController:(WYAPageController *)pageController
+- (void)ll_pageController:(LLPageTableViewController *)pageController
   willCachedViewController:(__kindof UIViewController *)viewController
                   withInfo:(NSDictionary *)info;
 
@@ -123,7 +126,7 @@ extern NSString * const WYAControllerDidFullyDisplayedNotification;
  *  @param viewController The viewController will appear.
  *  @param info           A dictionary that includes some infos, such as: `index` / `title`
  */
-- (void)wya_pageController:(WYAPageController *)pageController
+- (void)ll_pageController:(LLPageTableViewController *)pageController
    willEnterViewController:(__kindof UIViewController *)viewController
                   withInfo:(NSDictionary *)info;
 
@@ -134,19 +137,18 @@ extern NSString * const WYAControllerDidFullyDisplayedNotification;
  @param viewController The viewController entirely displayed
  @param info A dictionary that includes some infos, such as: `index` / `title`
  */
-- (void)wya_pageController:(WYAPageController *)pageController
+- (void)ll_pageController:(LLPageTableViewController *)pageController
     didEnterViewController:(__kindof UIViewController *)viewController
                   withInfo:(NSDictionary *)info;
 
 @end
 
-@interface WYAPageController
-: UIViewController <WYAMenuViewDataSource, WYAMenuViewDelegate, UIScrollViewDelegate,
-                    WYAPageControllerDelegate, WYAPageControllerDataSource>
-
-@property (nonatomic, weak) id<WYAPageControllerDelegate> delegate;
-@property (nonatomic, weak) id<WYAPageControllerDataSource> dataSource;
-
+@interface LLPageTableViewController
+: UIViewController <LLMenuViewDataSource, LLMenuViewDelegate, UIScrollViewDelegate,
+                    LLPageTableControllerDelegate, LLPageTableControllerDataSource>
+@property (nonatomic, weak) id<LLPageTableControllerDelegate> delegate;
+@property (nonatomic, weak) id<LLPageTableControllerDataSource> dataSource;
+@property (nonatomic, strong) UITableView * tableView;
 /**
  *  values keys 属性可以用于初始化控制器的时候为控制器传值(利用 KVC 来设置)
  使用时请确保 key 与控制器的属性名字一致！！(例如：控制器有需要设置的属性 type，那么 keys
@@ -224,12 +226,12 @@ extern NSString * const WYAControllerDidFullyDisplayedNotification;
 /**
  menuView的样式 默认为无下划线
  */
-@property (nonatomic, assign) WYAMenuViewStyle menuViewStyle;
+@property (nonatomic, assign) LLMenuViewStyle menuViewStyle;
 
 /**
  item布局分布样式居左 居中 居右 默认
  */
-@property (nonatomic, assign) WYAMenuViewLayoutMode menuViewLayoutMode;
+@property (nonatomic, assign) LLMenuViewLayoutMode menuViewLayoutMode;
 
 /**
  进度条颜色，默认和选中颜色一致（如果style为default,该属性无效）
@@ -242,7 +244,7 @@ extern NSString * const WYAControllerDidFullyDisplayedNotification;
 @property (nonatomic, strong, nullable) NSArray * progressViewWidths;
 
 /**
- 若每个进度调宽度一致，可设置该属性
+ 若每个进度条宽度一致，可设置该属性
  */
 @property (nonatomic, assign) CGFloat progressWidth;
 
@@ -268,27 +270,17 @@ extern NSString * const WYAControllerDidFullyDisplayedNotification;
 /**
  缓存机制，默认无限制（如果收到内存警告，会自动切换）
  */
-@property (nonatomic, assign) WYAPageControllerCachePolicy cachePolicy;
+@property (nonatomic, assign) LLPageTableControllerCachePolicy cachePolicy;
 
 /**
  预加载机制，在停止滑动的时候预加载n页
  */
-@property (nonatomic, assign) WYAPageControllerPreloadPolicy preloadPolicy;
+@property (nonatomic, assign) LLPageTableControllerPreloadPolicy preloadPolicy;
 
 /**
  ContentView是否需要弹簧效果
  */
 @property (nonatomic, assign) BOOL bounces;
-
-/**
- 自定义的导航栏，如果需要显示在自定义的导航栏上需要先设置该属性
- */
-@property (nonatomic, strong) WYANavBar * navBar;
-
-/**
- 是否作为NavigatonBar的titleView展示默认为NO，若不使用系统导航栏需要将自定义导航栏传入
- */
-@property (nonatomic, assign) BOOL showOnNavigationBar;
 
 /**
  用代码设置ContentView的contentOffset之前请设置startDragging = YES
@@ -324,13 +316,31 @@ extern NSString * const WYAControllerDidFullyDisplayedNotification;
 /**
  顶部导航栏
  */
-@property (nonatomic, weak, nullable) WYAMenuView * menuView;
+@property (nonatomic, strong, nullable) LLMenuView * menuView;
 
 /**
  内部容器视图
  */
-@property (nonatomic, weak, nullable) WYAPageScrollView * scrollView;
+@property (nonatomic, strong, nullable) LLPageScrollView * scrollView;
 
+/**
+ menuView的背景色
+ */
+@property (nonatomic, strong) UIColor * menuViewBackroundColor;
+/**
+ tableView 的section是否悬停 默认NO UITableViewStylePlain
+ */
+@property (nonatomic, assign) BOOL isPlain;
+
+/**
+ tableView的头部视图
+ */
+@property (nonatomic, weak) UIView * headerView;
+
+/**
+ 是否接收子控制器的tableView偏移量修正self.tableView的偏移量（如果设置头部视图需要打开接受通知）
+ */
+@property (nonatomic, assign) BOOL acceptNotification;
 /**
  menuView内部视图与左右的间距
  */
@@ -351,14 +361,14 @@ extern NSString * const WYAControllerDidFullyDisplayedNotification;
  `itemsMargins` 和 `itemsWidths` `values` 以及 `keys` 属性，请确保在调用 reload
  之前也同时更新了这些属性。并且，最最最重要的，注意数组的个数以防止溢出。
  */
-- (void)wya_reloadData;
+- (void)ll_reloadData;
 
 /**
  Layout all views in WMPageController
- @discussion This method will recall `-wya_pageController:preferredFrameForContentView:` and
- `-wya_pageContoller:preferredFrameForMenuView:`
+ @discussion This method will recall `-ll_pageController:preferredFrameForContentView:` and
+ `-ll_pageContoller:preferredFrameForMenuView:`
  */
-- (void)wya_forceLayoutSubviews;
+- (void)ll_forceLayoutSubviews;
 
 /**
  *  Update designated item's title
@@ -366,7 +376,7 @@ extern NSString * const WYAControllerDidFullyDisplayedNotification;
  *  @param title 新的标题
  *  @param index 目标序号
  */
-- (void)wya_updateTitle:(NSString *)title atIndex:(NSInteger)index;
+- (void)ll_updateTitle:(NSString *)title atIndex:(NSInteger)index;
 
 /**
  *  Update designated item's title and width
@@ -375,18 +385,18 @@ extern NSString * const WYAControllerDidFullyDisplayedNotification;
  *  @param index 目标序号
  *  @param width 对应item的新宽度
  */
-- (void)wya_updateTitle:(NSString *)title anWidth:(CGFloat)width atIndex:(NSInteger)index;
+- (void)ll_updateTitle:(NSString *)title anWidth:(CGFloat)width atIndex:(NSInteger)index;
 
-- (void)wya_updateAttributeTitle:(NSAttributedString *)title atIndex:(NSInteger)index;
+- (void)ll_updateAttributeTitle:(NSAttributedString *)title atIndex:(NSInteger)index;
 
 /**
  app即将进入后台接到的通知
  */
-- (void)wya_willResignActive:(NSNotification *)notification;
+- (void)ll_willResignActive:(NSNotification *)notification;
 /**
  app即将回到前台接收到的通知
  */
-- (void)wya_willEnterForeground:(NSNotification *)notification;
+- (void)ll_willEnterForeground:(NSNotification *)notification;
 
 @end
 

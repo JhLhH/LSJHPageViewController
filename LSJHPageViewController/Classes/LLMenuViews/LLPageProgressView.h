@@ -1,5 +1,5 @@
 //
-//  WYAProgressView.h
+//  LLProgressView.h
 //  Masonry
 //
 //  Created by 李俊恒 on 2018/11/10.
@@ -9,7 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface WYAPageProgressView : UIView
+@interface LLPageProgressView : UIView
 @property (nonatomic, strong) NSArray * itemFrames;
 @property (nonatomic, assign) CGColorRef color;
 @property (nonatomic, assign) CGFloat progress;
@@ -25,9 +25,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) BOOL hollow;
 @property (nonatomic, assign) BOOL hasBorder;
 
-- (void)wya_setProgressWithOutAnimate:(CGFloat)progress;
+- (void)ll_setProgressWithOutAnimate:(CGFloat)progress;
 
-- (void)wya_moveToPostion:(NSInteger)pos;
+- (void)ll_moveToPostion:(NSInteger)pos;
 @end
 
 NS_ASSUME_NONNULL_END

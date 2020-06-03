@@ -1,13 +1,13 @@
 //
-//  WYAMenuItem.m
+//  LLMenuItem.m
 //  Masonry
 //
 //  Created by 李俊恒 on 2018/11/10.
 //
 
-#import "WYAMenuItem.h"
+#import "LLMenuItem.h"
 
-@implementation WYAMenuItem {
+@implementation LLMenuItem {
     CGFloat _selectedRed, _selectedGreen, _selectedBlue, _selectedAlpha;
     CGFloat _normalRed, _normalGreen, _normalBlue, _normalAlpha;
     int _sign;
@@ -75,7 +75,7 @@
     [self addGestureRecognizer:tap];
 }
 
-- (void)wya_setSelected:(BOOL)selected withAnimation:(BOOL)animation
+- (void)ll_setSelected:(BOOL)selected withAnimation:(BOOL)animation
 {
     _selected = selected;
     if (!animation) {
@@ -112,8 +112,8 @@
 #pragma mark ======= Event
 - (void)touchUpInside:(id)sender
 {
-    if ([self.delegate respondsToSelector:@selector(wya_didPressedMenuItem:)]) {
-        [self.delegate wya_didPressedMenuItem:self];
+    if ([self.delegate respondsToSelector:@selector(ll_didPressedMenuItem:)]) {
+        [self.delegate ll_didPressedMenuItem:self];
     }
 }
 @end

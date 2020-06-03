@@ -1,18 +1,18 @@
 //
-//  WYAMenuView.m
+//  LLMenuView.m
 //  FMDB
 //
 //  Created by 李俊恒 on 2018/11/14.
 //
 
-#import "WYAMenuView.h"
-#define WYAMENUITEM_TAG_OFFSET 6250
-#define WYABADGEVIEW_TAG_OFFSET 1212
-#define WYADEFAULT_VALUE(value, defaultValue) (value != WYAUNDEFINED_VALUE ? value : defaultValue)
+#import "LLMenuView.h"
+#define LLMENUITEM_TAG_OFFSET 6250
+#define LLBADGEVIEW_TAG_OFFSET 1212
+#define LLDEFAULT_VALUE(value, defaultValue) (value != LLUNDEFINED_VALUE ? value : defaultValue)
 
-@interface WYAMenuView ()
+@interface LLMenuView ()
 
-@property (nonatomic, weak) WYAMenuItem * selItem;
+@property (nonatomic, weak) LLMenuItem * selItem;
 
 @property (nonatomic, strong) NSMutableArray * frames;
 
@@ -22,17 +22,17 @@
 
 @end
 
-@implementation WYAMenuView
+@implementation LLMenuView
 @synthesize progressHeight           = _progressHeight;
 @synthesize progressViewCornerRadius = _progressViewCornerRadius;
 #pragma mark ======= Setter
-- (void)setLayoutMode:(WYAMenuViewLayoutMode)layoutMode
+- (void)setLayoutMode:(LLMenuViewLayoutMode)layoutMode
 {
     _layoutMode = layoutMode;
     if (!self.subviews) {
         return;
     }
-    [self wya_reload];
+    [self ll_reload];
 }
 - (void)setFrame:(CGRect)frame
 {
@@ -91,8 +91,8 @@
     __weak typeof(self) weakSelf = self;
     [self.scrollView.subviews enumerateObjectsUsingBlock:^(__kindof UIView * _Nonnull obj,
                                                            NSUInteger idx, BOOL * _Nonnull stop) {
-        if ([obj isKindOfClass:[WYAMenuItem class]]) {
-            ((WYAMenuItem *)obj).speedFactor = weakSelf.speedFactor;
+        if ([obj isKindOfClass:[LLMenuItem class]]) {
+            ((LLMenuItem *)obj).speedFactor = weakSelf.speedFactor;
         }
     }];
 }
@@ -115,7 +115,7 @@
         [self addSubview:leftView];
         _leftView = leftView;
     }
-    [self wya_resetFrames];
+    [self ll_resetFrames];
 }
 - (void)setRightView:(UIView *)rightView
 {
@@ -127,27 +127,27 @@
         [self addSubview:rightView];
         _rightView = rightView;
     }
-    [self wya_resetFrames];
+    [self ll_resetFrames];
 }
 - (void)setContentMargin:(CGFloat)contentMargin
 {
     _contentMargin = contentMargin;
     if (self.scrollView) {
-        [self wya_resetFrames];
+        [self ll_resetFrames];
     }
 }
 #pragma mark ======= Getter
 - (CGFloat)progressHeight
 {
     switch (self.style) {
-        case WYAMenuViewStyleLine:
-        case WYAMenuViewStyleTriangle:
-            return WYADEFAULT_VALUE(_progressHeight, 2);
+        case LLMenuViewStyleLine:
+        case LLMenuViewStyleTriangle:
+            return LLDEFAULT_VALUE(_progressHeight, 2);
             break;
-        case WYAMenuViewStyleFlood:
-        case WYAMenuViewStyleSegmented:
-        case WYAMenuViewStyleFloodHollow:
-            return WYADEFAULT_VALUE(_progressHeight, ceil(self.frame.size.height * 0.8));
+        case LLMenuViewStyleFlood:
+        case LLMenuViewStyleSegmented:
+        case LLMenuViewStyleFloodHollow:
+            return LLDEFAULT_VALUE(_progressHeight, ceil(self.frame.size.height * 0.8));
             break;
         default:
             return _progressHeight;
@@ -155,12 +155,12 @@
 }
 - (CGFloat)progressViewCornerRadius
 {
-    return WYADEFAULT_VALUE(_progressViewCornerRadius, self.progressHeight / 2.0);
+    return LLDEFAULT_VALUE(_progressViewCornerRadius, self.progressHeight / 2.0);
 }
 - (UIColor *)lineColor
 {
     if (!_lineColor) {
-        _lineColor = [self colorForState:WYAMenuItemStateSelected atIndex:0];
+        _lineColor = [self colorForState:LLMenuItemStateSelected atIndex:0];
     }
     return _lineColor;
 }
@@ -172,39 +172,39 @@
     return _frames;
 }
 // 当前index的颜色
-- (UIColor *)colorForState:(WYAMenuItemState)state atIndex:(NSInteger)index
+- (UIColor *)colorForState:(LLMenuItemState)state atIndex:(NSInteger)index
 {
-    if ([self.delegate respondsToSelector:@selector(wya_menuView:titleColorForState:atIndex:)]) {
-        return [self.delegate wya_menuView:self titleColorForState:state atIndex:index];
+    if ([self.delegate respondsToSelector:@selector(ll_menuView:titleColorForState:atIndex:)]) {
+        return [self.delegate ll_menuView:self titleColorForState:state atIndex:index];
     }
     return [UIColor blackColor];
 }
 // index字体大小
-- (CGFloat)sizeForState:(WYAMenuItemState)state atIndex:(NSInteger)index
+- (CGFloat)sizeForState:(LLMenuItemState)state atIndex:(NSInteger)index
 {
-    if ([self.delegate respondsToSelector:@selector(wya_menuView:titleSizeForState:atIndex:)]) {
-        return [self.delegate wya_menuView:self titleSizeForState:state atIndex:index];
+    if ([self.delegate respondsToSelector:@selector(ll_menuView:titleSizeForState:atIndex:)]) {
+        return [self.delegate ll_menuView:self titleSizeForState:state atIndex:index];
     }
     return 15.0;
 }
 
 - (UIView *)badgeViewAtIndex:(NSInteger)index
 {
-    if (![self.dataSource respondsToSelector:@selector(wya_menuView:badgeViewAtIndex:)]) {
+    if (![self.dataSource respondsToSelector:@selector(ll_menuView:badgeViewAtIndex:)]) {
         return nil;
     }
-    UIView * badgeView = [self.dataSource wya_menuView:self badgeViewAtIndex:index];
+    UIView * badgeView = [self.dataSource ll_menuView:self badgeViewAtIndex:index];
     if (!badgeView) {
         return nil;
     }
-    badgeView.tag = index + WYABADGEVIEW_TAG_OFFSET;
+    badgeView.tag = index + LLBADGEVIEW_TAG_OFFSET;
 
     return badgeView;
 }
 #pragma mark ======= Public Methods
-- (WYAMenuItem *)wya_itemAtIndex:(NSInteger)index
+- (LLMenuItem *)ll_itemAtIndex:(NSInteger)index
 {
-    return (WYAMenuItem *)[self viewWithTag:(index + WYAMENUITEM_TAG_OFFSET)];
+    return (LLMenuItem *)[self viewWithTag:(index + LLMENUITEM_TAG_OFFSET)];
 }
 - (void)setProgressViewIsNaughty:(BOOL)progressViewIsNaughty
 {
@@ -214,7 +214,7 @@
     }
 }
 
-- (void)wya_reload
+- (void)ll_reload
 {
     [self.frames removeAllObjects];
     [self.progressView removeFromSuperview];
@@ -227,75 +227,75 @@
     [self addBadgeViews];
 }
 
-- (void)wya_slidMenuAtProgress:(CGFloat)progress
+- (void)ll_slidMenuAtProgress:(CGFloat)progress
 {
     if (self.progressView) {
         self.progressView.progress = progress;
     }
-    NSInteger tag             = (NSInteger)progress + WYAMENUITEM_TAG_OFFSET;
-    CGFloat rate              = progress - tag + WYAMENUITEM_TAG_OFFSET;
-    WYAMenuItem * currentItem = (WYAMenuItem *)[self viewWithTag:tag];
-    WYAMenuItem * nextItem    = (WYAMenuItem *)[self viewWithTag:tag + 1];
+    NSInteger tag             = (NSInteger)progress + LLMENUITEM_TAG_OFFSET;
+    CGFloat rate              = progress - tag + LLMENUITEM_TAG_OFFSET;
+    LLMenuItem * currentItem = (LLMenuItem *)[self viewWithTag:tag];
+    LLMenuItem * nextItem    = (LLMenuItem *)[self viewWithTag:tag + 1];
     if (rate == 0.0) {
-        [self.selItem wya_setSelected:NO withAnimation:NO];
+        [self.selItem ll_setSelected:NO withAnimation:NO];
         self.selItem = currentItem;
-        [self.selItem wya_setSelected:YES withAnimation:NO];
-        [self wya_refreshContentOffset];
+        [self.selItem ll_setSelected:YES withAnimation:NO];
+        [self ll_refreshContentOffset];
         return;
     }
     currentItem.rate = 1 - rate;
     nextItem.rate    = rate;
 }
 
-- (void)wya_selectItemAtIndex:(NSInteger)index
+- (void)ll_selectItemAtIndex:(NSInteger)index
 {
-    NSInteger tag          = index + WYAMENUITEM_TAG_OFFSET;
-    NSInteger currentIndex = self.selItem.tag - WYAMENUITEM_TAG_OFFSET;
+    NSInteger tag          = index + LLMENUITEM_TAG_OFFSET;
+    NSInteger currentIndex = self.selItem.tag - LLMENUITEM_TAG_OFFSET;
     self.selectIndex       = index;
     if (index == currentIndex || !self.selItem) {
         return;
     }
-    WYAMenuItem * item = (WYAMenuItem *)[self viewWithTag:tag];
-    [self.selItem wya_setSelected:NO withAnimation:NO];
+    LLMenuItem * item = (LLMenuItem *)[self viewWithTag:tag];
+    [self.selItem ll_setSelected:NO withAnimation:NO];
     self.selItem = item;
-    [self.selItem wya_setSelected:YES withAnimation:NO];
-    [self.progressView wya_setProgressWithOutAnimate:index];
-    if ([self.delegate respondsToSelector:@selector(wya_menuView:didSelectedIndex:currentINdex:)]) {
-        [self.delegate wya_menuView:self didSelectedIndex:index currentINdex:currentIndex];
+    [self.selItem ll_setSelected:YES withAnimation:NO];
+    [self.progressView ll_setProgressWithOutAnimate:index];
+    if ([self.delegate respondsToSelector:@selector(ll_menuView:didSelectedIndex:currentINdex:)]) {
+        [self.delegate ll_menuView:self didSelectedIndex:index currentINdex:currentIndex];
     }
-    [self wya_refreshContentOffset];
+    [self ll_refreshContentOffset];
 }
 
-- (void)wya_updateTitle:(NSString *)title atIndex:(NSInteger)index anWidth:(BOOL)update
+- (void)ll_updateTitle:(NSString *)title atIndex:(NSInteger)index anWidth:(BOOL)update
 {
     if (index >= self.titlesCount || index < 0) {
         return;
     }
-    WYAMenuItem * item = (WYAMenuItem *)[self viewWithTag:(WYAMENUITEM_TAG_OFFSET + index)];
+    LLMenuItem * item = (LLMenuItem *)[self viewWithTag:(LLMENUITEM_TAG_OFFSET + index)];
     item.text          = title;
     if (!update) {
         return;
     }
-    [self wya_resetFrames];
+    [self ll_resetFrames];
 }
 
-- (void)wya_updateAttributeTitle:(NSAttributedString *)title
+- (void)ll_updateAttributeTitle:(NSAttributedString *)title
                          atIndex:(NSInteger)index
                         andWidth:(BOOL)update
 {
     if (index >= self.titlesCount || index < 0) {
         return;
     }
-    WYAMenuItem * item  = (WYAMenuItem *)[self viewWithTag:(WYAMENUITEM_TAG_OFFSET + index)];
+    LLMenuItem * item  = (LLMenuItem *)[self viewWithTag:(LLMENUITEM_TAG_OFFSET + index)];
     item.attributedText = title;
     if (!update) {
         return;
     }
-    [self wya_resetFrames];
+    [self ll_resetFrames];
 }
-- (void)wya_updateBadgeViewAtIndex:(NSInteger)index
+- (void)ll_updateBadgeViewAtIndex:(NSInteger)index
 {
-    UIView * oldBadgeView = [self.scrollView viewWithTag:WYABADGEVIEW_TAG_OFFSET + index];
+    UIView * oldBadgeView = [self.scrollView viewWithTag:LLBADGEVIEW_TAG_OFFSET + index];
     if (oldBadgeView) {
         [oldBadgeView removeFromSuperview];
     }
@@ -304,7 +304,7 @@
 }
 
 // 让选中的item居中
-- (void)wya_refreshContentOffset
+- (void)ll_refreshContentOffset
 {
     CGRect frame       = self.selItem.frame;
     CGFloat itemX      = frame.origin.x;
@@ -330,15 +330,15 @@
 #pragma mark ======= Data source
 - (NSInteger)titlesCount
 {
-    return [self.dataSource wya_numberOfTitlesInMenuView:self];
+    return [self.dataSource ll_numberOfTitlesInMenuView:self];
 }
 
 #pragma mark ======= Private Methods
 - (instancetype)initWithFrame:(CGRect)frame
 {
     if (self = [super initWithFrame:frame]) {
-        self.progressViewCornerRadius = WYAUNDEFINED_VALUE;
-        self.progressHeight           = WYAUNDEFINED_VALUE;
+        self.progressViewCornerRadius = LLUNDEFINED_VALUE;
+        self.progressHeight           = LLUNDEFINED_VALUE;
     }
     return self;
 }
@@ -360,10 +360,10 @@
     if (self.selectIndex == 0) {
         return;
     }
-    [self wya_selectItemAtIndex:self.selectIndex];
+    [self ll_selectItemAtIndex:self.selectIndex];
 }
 
-- (void)wya_resetFrames
+- (void)ll_resetFrames
 {
     CGRect frame = self.bounds;
     if (self.rightView) {
@@ -408,18 +408,18 @@
 - (CGRect)calculateProgressViewFrame
 {
     switch (self.style) {
-        case WYAMenuViewStyleDefault: {
+        case LLMenuViewStyleDefault: {
             return CGRectZero;
         }
-        case WYAMenuViewStyleLine:
-        case WYAMenuViewStyleTriangle: {
+        case LLMenuViewStyleLine:
+        case LLMenuViewStyleTriangle: {
             return CGRectMake(0, self.frame.size.height - self.progressHeight -
                                  self.progressViewBottomSpace,
                               self.scrollView.contentSize.width, self.progressHeight);
         }
-        case WYAMenuViewStyleFloodHollow:
-        case WYAMenuViewStyleSegmented:
-        case WYAMenuViewStyleFlood: {
+        case LLMenuViewStyleFloodHollow:
+        case LLMenuViewStyleSegmented:
+        case LLMenuViewStyleFlood: {
             return CGRectMake(0, (self.frame.size.height - self.progressHeight) / 2,
                               self.scrollView.contentSize.width, self.progressHeight);
         }
@@ -427,18 +427,18 @@
 }
 - (void)resetItemFrame:(NSInteger)index
 {
-    WYAMenuItem * item = (WYAMenuItem *)[self viewWithTag:(WYAMENUITEM_TAG_OFFSET + index)];
+    LLMenuItem * item = (LLMenuItem *)[self viewWithTag:(LLMENUITEM_TAG_OFFSET + index)];
     CGRect frame       = [self.frames[index] CGRectValue];
     item.frame         = frame;
-    if ([self.delegate respondsToSelector:@selector(wya_menuView:didLayoutItemFrame:atIndex:)]) {
-        [self.delegate wya_menuView:self didLayoutItemFrame:item atIndex:index];
+    if ([self.delegate respondsToSelector:@selector(ll_menuView:didLayoutItemFrame:atIndex:)]) {
+        [self.delegate ll_menuView:self didLayoutItemFrame:item atIndex:index];
     }
 }
 
 - (void)resetBadgeFrame:(NSInteger)index
 {
     CGRect frame       = [self.frames[index] CGRectValue];
-    UIView * badgeView = [self.scrollView viewWithTag:(WYABADGEVIEW_TAG_OFFSET + index)];
+    UIView * badgeView = [self.scrollView viewWithTag:(LLBADGEVIEW_TAG_OFFSET + index)];
     if (badgeView) {
         CGRect badgeFrame = [self badgeViewAtIndex:index].frame;
         badgeFrame.origin.x += frame.origin.x;
@@ -490,19 +490,19 @@
         return;
     }
     [self addProgressViewWithFrame:frame
-                        isTriangle:(self.style == WYAMenuViewStyleTriangle)
-                         hasBorder:(self.style == WYAMenuViewStyleSegmented)
-                            hollow:(self.style == WYAMenuViewStyleFloodHollow)
+                        isTriangle:(self.style == LLMenuViewStyleTriangle)
+                         hasBorder:(self.style == LLMenuViewStyleSegmented)
+                            hollow:(self.style == LLMenuViewStyleFloodHollow)
                       cornerRadius:self.progressViewCornerRadius];
 }
-- (void)wya_deselectedItemsIfNeeded
+- (void)ll_deselectedItemsIfNeeded
 {
     [self.scrollView.subviews enumerateObjectsUsingBlock:^(__kindof UIView * _Nonnull obj,
                                                            NSUInteger idx, BOOL * _Nonnull stop) {
-        if (![obj isKindOfClass:[WYAMenuItem class]] || obj == self.selItem) {
+        if (![obj isKindOfClass:[LLMenuItem class]] || obj == self.selItem) {
             return;
         }
-        [(WYAMenuItem *)obj wya_setSelected:NO withAnimation:NO];
+        [(LLMenuItem *)obj ll_setSelected:NO withAnimation:NO];
     }];
 }
 
@@ -528,31 +528,31 @@
     [self caclculateItemFrames];
     for (int i = 0; i < self.titlesCount; i++) {
         CGRect frame                = [self.frames[i] CGRectValue];
-        WYAMenuItem * item          = [[WYAMenuItem alloc] initWithFrame:frame];
-        item.tag                    = (i + WYAMENUITEM_TAG_OFFSET);
+        LLMenuItem * item          = [[LLMenuItem alloc] initWithFrame:frame];
+        item.tag                    = (i + LLMENUITEM_TAG_OFFSET);
         item.delegate               = self;
-        item.text                   = [self.dataSource wya_menuView:self titleAtIndex:i];
+        item.text                   = [self.dataSource ll_menuView:self titleAtIndex:i];
         item.textAlignment          = NSTextAlignmentCenter;
         item.userInteractionEnabled = YES;
         item.backgroundColor        = [UIColor clearColor];
-        item.normalSize             = [self sizeForState:WYAMenuItemStateNormal atIndex:i];
-        item.selectedSize           = [self sizeForState:WYAMenuItemStateSelected atIndex:i];
-        item.normalColor            = [self colorForState:WYAMenuItemStateNormal atIndex:i];
-        item.selectedColor          = [self colorForState:WYAMenuItemStateSelected atIndex:i];
+        item.normalSize             = [self sizeForState:LLMenuItemStateNormal atIndex:i];
+        item.selectedSize           = [self sizeForState:LLMenuItemStateSelected atIndex:i];
+        item.normalColor            = [self colorForState:LLMenuItemStateNormal atIndex:i];
+        item.selectedColor          = [self colorForState:LLMenuItemStateSelected atIndex:i];
         item.speedFactor            = self.speedFactor;
         if (self.fontName) {
             item.font = [UIFont fontWithName:self.fontName size:item.selectedSize];
         } else {
             item.font = [UIFont systemFontOfSize:item.selectedSize];
         }
-        if ([self.dataSource respondsToSelector:@selector(wya_menuView:initialMenuItem:atIndex:)]) {
-            item = [self.dataSource wya_menuView:self initialMenuItem:item atIndex:i];
+        if ([self.dataSource respondsToSelector:@selector(ll_menuView:initialMenuItem:atIndex:)]) {
+            item = [self.dataSource ll_menuView:self initialMenuItem:item atIndex:i];
         }
         if (i == 0) {
-            [item wya_setSelected:YES withAnimation:NO];
+            [item ll_setSelected:YES withAnimation:NO];
             self.selItem = item;
         } else {
-            [item wya_setSelected:NO withAnimation:NO];
+            [item ll_setSelected:NO withAnimation:NO];
         }
         [self.scrollView addSubview:item];
     }
@@ -564,8 +564,8 @@
     CGFloat contentWidth = [self itemMarginAtIndex:0];
     for (int i = 0; i < self.titlesCount; i++) {
         CGFloat itemW = 60.0;
-        if ([self.delegate respondsToSelector:@selector(wya_menuView:widthForItemAtIndex:)]) {
-            itemW = [self.delegate wya_menuView:self widthForItemAtIndex:i];
+        if ([self.delegate respondsToSelector:@selector(ll_menuView:widthForItemAtIndex:)]) {
+            itemW = [self.delegate ll_menuView:self widthForItemAtIndex:i];
         }
         CGRect frame = CGRectMake(contentWidth, 0, itemW, self.frame.size.height);
         // 记录frame
@@ -577,20 +577,20 @@
         CGFloat distance = self.scrollView.frame.size.width - contentWidth;
         CGFloat (^shiftDis)(int);
         switch (self.layoutMode) {
-            case WYAMenuViewLayoutModeScatter: {
+            case LLMenuViewLayoutModeScatter: {
                 CGFloat gap = distance / (self.titlesCount + 1);
                 shiftDis    = ^CGFloat(int index) { return gap * (index + 1); };
                 break;
             }
-            case WYAMenuViewLayoutModeLeft: {
+            case LLMenuViewLayoutModeLeft: {
                 shiftDis = ^CGFloat(int index) { return 0.0; };
                 break;
             }
-            case WYAMenuViewLayoutModeRight: {
+            case LLMenuViewLayoutModeRight: {
                 shiftDis = ^CGFloat(int index) { return distance; };
                 break;
             }
-            case WYAMenuViewLayoutModeCenter: {
+            case LLMenuViewLayoutModeCenter: {
                 shiftDis = ^CGFloat(int index) { return distance / 2; };
                 break;
             }
@@ -606,8 +606,8 @@
 }
 - (CGFloat)itemMarginAtIndex:(NSInteger)index
 {
-    if ([self.delegate respondsToSelector:@selector(wya_menuView:itemMarginAtIndex:)]) {
-        return [self.delegate wya_menuView:self itemMarginAtIndex:index];
+    if ([self.delegate respondsToSelector:@selector(ll_menuView:itemMarginAtIndex:)]) {
+        return [self.delegate ll_menuView:self itemMarginAtIndex:index];
     }
     return 0.0;
 }
@@ -618,7 +618,7 @@
                           hollow:(BOOL)isHollow
                     cornerRadius:(CGFloat)cornerRadius
 {
-    WYAPageProgressView * pView = [[WYAPageProgressView alloc] initWithFrame:frame];
+    LLPageProgressView * pView = [[LLPageProgressView alloc] initWithFrame:frame];
     pView.itemFrames            = [self convertProgressWidthsToFrames];
     pView.color                 = self.lineColor.CGColor;
     pView.isTriangle            = isTriangle;
@@ -632,31 +632,31 @@
     [self.scrollView insertSubview:self.progressView atIndex:0];
 }
 #pragma mark ======= Menum item delegate
-- (void)wya_didPressedMenuItem:(WYAMenuItem *)menuItem
+- (void)ll_didPressedMenuItem:(LLMenuItem *)menuItem
 {
-    if ([self.delegate respondsToSelector:@selector(wya_menuView:shouldSelectedIndex:)]) {
-        BOOL should = [self.delegate wya_menuView:self
-                              shouldSelectedIndex:(menuItem.tag - WYAMENUITEM_TAG_OFFSET)];
+    if ([self.delegate respondsToSelector:@selector(ll_menuView:shouldSelectedIndex:)]) {
+        BOOL should = [self.delegate ll_menuView:self
+                              shouldSelectedIndex:(menuItem.tag - LLMENUITEM_TAG_OFFSET)];
         if (!should) {
             return;
         }
     }
-    CGFloat progress = menuItem.tag - WYAMENUITEM_TAG_OFFSET;
-    [self.progressView wya_moveToPostion:progress];
+    CGFloat progress = menuItem.tag - LLMENUITEM_TAG_OFFSET;
+    [self.progressView ll_moveToPostion:progress];
 
-    NSInteger currentIndex = self.selItem.tag - WYAMENUITEM_TAG_OFFSET;
-    if ([self.delegate respondsToSelector:@selector(wya_menuView:didSelectedIndex:currentINdex:)]) {
-        [self.delegate wya_menuView:self
-                   didSelectedIndex:(menuItem.tag - WYAMENUITEM_TAG_OFFSET)
+    NSInteger currentIndex = self.selItem.tag - LLMENUITEM_TAG_OFFSET;
+    if ([self.delegate respondsToSelector:@selector(ll_menuView:didSelectedIndex:currentINdex:)]) {
+        [self.delegate ll_menuView:self
+                   didSelectedIndex:(menuItem.tag - LLMENUITEM_TAG_OFFSET)
                        currentINdex:currentIndex];
     }
 
-    [self.selItem wya_setSelected:NO withAnimation:YES];
-    [menuItem wya_setSelected:YES withAnimation:YES];
+    [self.selItem ll_setSelected:NO withAnimation:YES];
+    [menuItem ll_setSelected:YES withAnimation:YES];
     self.selItem = menuItem;
 
-    NSTimeInterval delay = self.style == WYAMenuViewStyleDefault ? 0 : 0.3f;
+    NSTimeInterval delay = self.style == LLMenuViewStyleDefault ? 0 : 0.3f;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)),
-                   dispatch_get_main_queue(), ^{ [self wya_refreshContentOffset]; });
+                   dispatch_get_main_queue(), ^{ [self ll_refreshContentOffset]; });
 }
 @end

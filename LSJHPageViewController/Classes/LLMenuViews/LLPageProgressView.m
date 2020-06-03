@@ -1,13 +1,13 @@
 //
-//  WYAProgressView.m
+//  LLProgressView.m
 //  Masonry
 //
 //  Created by 李俊恒 on 2018/11/10.
 //
 
-#import "WYAPageProgressView.h"
+#import "LLPageProgressView.h"
 
-@implementation WYAPageProgressView {
+@implementation LLPageProgressView {
     int _sign;
     CGFloat _gap;
     CGFloat _step;
@@ -21,7 +21,7 @@
     }
     return _speedFactor;
 }
-- (void)wya_setProgressWithOutAnimate:(CGFloat)progress
+- (void)ll_setProgressWithOutAnimate:(CGFloat)progress
 {
     if (self.progress == progress) return;
     _progress = progress;
@@ -37,7 +37,7 @@
     _cornerRadius = cornerRadius;
     [self setNeedsDisplay];
 }
-- (void)wya_moveToPostion:(NSInteger)pos
+- (void)ll_moveToPostion:(NSInteger)pos
 {
     // 获取绝对值
     _gap  = fabs(self.progress - pos);
@@ -48,7 +48,7 @@
     }
     CADisplayLink * link =
     [CADisplayLink displayLinkWithTarget:self
-                                selector:@selector(wya_progressChanged)];
+                                selector:@selector(ll_progressChanged)];
     [link addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
     _link = link;
 }
@@ -58,7 +58,7 @@
     _progress = progress;
     [self setNeedsDisplay];
 }
-- (void)wya_progressChanged
+- (void)ll_progressChanged
 {
     if (_gap > 0.000001) {
         _gap -= _step;

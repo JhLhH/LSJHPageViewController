@@ -1,21 +1,21 @@
 //
-//  WYAPageController.m
+//  LLPageController.m
 //  FMDB
 //
 //  Created by 李俊恒 on 2018/11/14.
 //
 
-#import "WYAPageController.h"
+#import "LLPageController.h"
 
-NSString * const WYAControllerDidAddToSuperViewNotification =
-@"WYAControllerDidAddToSuperViewNotification";
-NSString * const WYAControllerDidFullyDisplayedNotification =
-@"WYAControllerDidFullyDisplayedNotification";
+NSString * const LLControllerDidAddToSuperViewNotification =
+@"LLControllerDidAddToSuperViewNotification";
+NSString * const LLControllerDidFullyDisplayedNotification =
+@"LLControllerDidFullyDisplayedNotification";
 
 static NSInteger const kWMUndefinedIndex           = -1;
 static NSInteger const kWMControllerCountUndefined = -1;
 
-@interface WYAPageController () {
+@interface LLPageController () {
     CGFloat _targetX;
     CGRect _contentViewFrame, _menuViewFrame;
     BOOL _hasInited, _shouldNotScroll;
@@ -52,7 +52,7 @@ static NSInteger const kWMControllerCountUndefined = -1;
 @property (nonatomic, readonly) NSInteger childControllersCount;
 @end
 
-@implementation WYAPageController
+@implementation LLPageController
 #pragma mark ======= Lazy Loading
 - (NSMutableDictionary *)posRecords
 {
@@ -113,7 +113,7 @@ static NSInteger const kWMControllerCountUndefined = -1;
                                                object:nil];
 }
 
-- (void)wya_forceLayoutSubviews
+- (void)ll_forceLayoutSubviews
 {
     if (!self.childControllersCount) {
         return;
@@ -125,7 +125,7 @@ static NSInteger const kWMControllerCountUndefined = -1;
     [self adjustDisplayingViewControllersFrame];
 }
 #pragma mark ======= setter
-- (void)setNavBar:(WYANavBar *)navBar
+- (void)setNavBar:(LLNavBar *)navBar
 {
     _navBar = navBar;
 }
@@ -142,17 +142,17 @@ static NSInteger const kWMControllerCountUndefined = -1;
         self.menuView.progressViewCornerRadius = progressViewCornerRadius;
     }
 }
-- (void)setMenuViewLayoutMode:(WYAMenuViewLayoutMode)menuViewLayoutMode
+- (void)setMenuViewLayoutMode:(LLMenuViewLayoutMode)menuViewLayoutMode
 {
     _menuViewLayoutMode = menuViewLayoutMode;
     if (self.menuView.superview) {
         [self resetMenuView];
     }
 }
-- (void)setCachePolicy:(WYAPageControllerCachePolicy)cachePolicy
+- (void)setCachePolicy:(LLPageControllerCachePolicy)cachePolicy
 {
     _cachePolicy = cachePolicy;
-    if (cachePolicy != WYAPageControllerCachePolicyDisabled) {
+    if (cachePolicy != LLPageControllerCachePolicyDisabled) {
         self.memCache.countLimit = _cachePolicy;
     }
 }
@@ -162,7 +162,7 @@ static NSInteger const kWMControllerCountUndefined = -1;
     _selectIndex       = selectIndex;
     _markedSelectIndex = kWMUndefinedIndex;
     if (self.menuView && _hasInited) {
-        [self.menuView wya_selectItemAtIndex:selectIndex];
+        [self.menuView ll_selectItemAtIndex:selectIndex];
     } else {
         _markedSelectIndex    = selectIndex;
         UIViewController * vc = [self.memCache objectForKey:@(selectIndex)];
@@ -207,7 +207,7 @@ static NSInteger const kWMControllerCountUndefined = -1;
         self.menuView.contentMargin = menuViewContentMargin;
     }
 }
-- (void)wya_reloadData
+- (void)ll_reloadData
 {
     [self clearDatas];
     if (!self.childControllersCount) return;
@@ -217,17 +217,17 @@ static NSInteger const kWMControllerCountUndefined = -1;
     [self viewDidLayoutSubviews];
     [self didEnterController:self.currentViewController atIndex:self.selectIndex];
 }
-- (void)wya_updateTitle:(NSString *)title atIndex:(NSInteger)index
+- (void)ll_updateTitle:(NSString *)title atIndex:(NSInteger)index
 {
-    [self.menuView wya_updateTitle:title atIndex:index anWidth:NO];
+    [self.menuView ll_updateTitle:title atIndex:index anWidth:NO];
 }
 
-- (void)wya_updateAttributeTitle:(NSAttributedString *)title atIndex:(NSInteger)index
+- (void)ll_updateAttributeTitle:(NSAttributedString *)title atIndex:(NSInteger)index
 {
-    [self.menuView wya_updateAttributeTitle:title atIndex:index andWidth:NO];
+    [self.menuView ll_updateAttributeTitle:title atIndex:index andWidth:NO];
 }
 
-- (void)wya_updateTitle:(NSString *)title anWidth:(CGFloat)width atIndex:(NSInteger)index
+- (void)ll_updateTitle:(NSString *)title anWidth:(CGFloat)width atIndex:(NSInteger)index
 {
     if (self.itemsWidths && index < self.itemsWidths.count) {
         NSMutableArray * mutableWidths = [NSMutableArray arrayWithArray:self.itemsWidths];
@@ -241,7 +241,7 @@ static NSInteger const kWMControllerCountUndefined = -1;
         }
         self.itemsWidths = [mutableWidths copy];
     }
-    [self.menuView wya_updateTitle:title atIndex:index anWidth:NO];
+    [self.menuView ll_updateTitle:title atIndex:index anWidth:NO];
 }
 - (void)setShowOnNavigationBar:(BOOL)showOnNavigationBar
 {
@@ -252,12 +252,12 @@ static NSInteger const kWMControllerCountUndefined = -1;
     if (self.menuView) {
         [self.menuView removeFromSuperview];
         [self addMenuView];
-        [self wya_forceLayoutSubviews];
-        [self.menuView wya_slidMenuAtProgress:self.selectIndex];
+        [self ll_forceLayoutSubviews];
+        [self.menuView ll_slidMenuAtProgress:self.selectIndex];
     }
 }
 #pragma mark ======= Noticication
-- (void)wya_willResignActive:(NSNotification *)notification
+- (void)ll_willResignActive:(NSNotification *)notification
 {
     for (int i = 0; i < self.childControllersCount; i++) {
         id obj = [self.memCache objectForKey:@(i)];
@@ -267,7 +267,7 @@ static NSInteger const kWMControllerCountUndefined = -1;
     }
 }
 
-- (void)wya_willEnterForeground:(NSNotification *)notification
+- (void)ll_willEnterForeground:(NSNotification *)notification
 {
     for (NSNumber * key in self.backgroundCache.allKeys) {
         if (![self.memCache objectForKey:key]) {
@@ -288,9 +288,9 @@ static NSInteger const kWMControllerCountUndefined = -1;
 {
     if (self.childControllersCount &&
         [self.delegate
-        respondsToSelector:@selector(wya_pageController:willCachedViewController:withInfo:)]) {
+        respondsToSelector:@selector(ll_pageController:willCachedViewController:withInfo:)]) {
         NSDictionary * info = [self infoWithIndex:index];
-        [self.delegate wya_pageController:self willCachedViewController:vc withInfo:info];
+        [self.delegate ll_pageController:self willCachedViewController:vc withInfo:info];
     }
 }
 
@@ -299,9 +299,9 @@ static NSInteger const kWMControllerCountUndefined = -1;
     _selectIndex = (int)index;
     if (self.childControllersCount &&
         [self.delegate
-        respondsToSelector:@selector(wya_pageController:willEnterViewController:withInfo:)]) {
+        respondsToSelector:@selector(ll_pageController:willEnterViewController:withInfo:)]) {
         NSDictionary * info = [self infoWithIndex:index];
-        [self.delegate wya_pageController:self willEnterViewController:vc withInfo:info];
+        [self.delegate ll_pageController:self willEnterViewController:vc withInfo:info];
     }
 }
 
@@ -312,19 +312,19 @@ static NSInteger const kWMControllerCountUndefined = -1;
     [self postFullDisplayNotificationWithCurrentIndex:self.selectIndex];
     NSDictionary * info = [self infoWithIndex:index];
     if ([self.delegate
-        respondsToSelector:@selector(wya_pageController:didEnterViewController:withInfo:)]) {
-        [self.delegate wya_pageController:self didEnterViewController:vc withInfo:info];
+        respondsToSelector:@selector(ll_pageController:didEnterViewController:withInfo:)]) {
+        [self.delegate ll_pageController:self didEnterViewController:vc withInfo:info];
     }
     // 当创建控制器时，调用延迟加载的代理方法
     if (_initializedIndex == index &&
         [self.delegate
-        respondsToSelector:@selector(wya_pageController:lazyLoadViewController:withInfo:)]) {
-        [self.delegate wya_pageController:self lazyLoadViewController:vc withInfo:info];
+        respondsToSelector:@selector(ll_pageController:lazyLoadViewController:withInfo:)]) {
+        [self.delegate ll_pageController:self lazyLoadViewController:vc withInfo:info];
         _initializedIndex = kWMUndefinedIndex;
     }
 
     // 根据控制器 preloadPolicy 预加载控制器
-    if (self.preloadPolicy == WYAPageControllerPreloadPolicyNear) return;
+    if (self.preloadPolicy == LLPageControllerPreloadPolicyNear) return;
     int length = (int)self.preloadPolicy;
     int start  = 0;
     int end    = (int)self.childControllersCount - 1;
@@ -349,8 +349,8 @@ static NSInteger const kWMControllerCountUndefined = -1;
 {
     if (_controllerCount == kWMControllerCountUndefined) {
         if ([self.dataSource
-            respondsToSelector:@selector(wya_numbersOfChildControllersInPageController:)]) {
-            _controllerCount = [self.dataSource wya_numbersOfChildControllersInPageController:self];
+            respondsToSelector:@selector(ll_numbersOfChildControllersInPageController:)]) {
+            _controllerCount = [self.dataSource ll_numbersOfChildControllersInPageController:self];
         } else {
             _controllerCount = self.ViewControllerClasses.count;
         }
@@ -360,8 +360,8 @@ static NSInteger const kWMControllerCountUndefined = -1;
 
 - (UIViewController * _Nonnull)initializeViewControllerAtIndex:(NSInteger)index
 {
-    if ([self.dataSource respondsToSelector:@selector(wya_pageController:viewControllerAtIndex:)]) {
-        return [self.dataSource wya_pageController:self viewControllerAtIndex:index];
+    if ([self.dataSource respondsToSelector:@selector(ll_pageController:viewControllerAtIndex:)]) {
+        return [self.dataSource ll_pageController:self viewControllerAtIndex:index];
     }
     return [[self.ViewControllerClasses[index] alloc] init];
 }
@@ -369,8 +369,8 @@ static NSInteger const kWMControllerCountUndefined = -1;
 - (NSString * _Nonnull)titleAtIndex:(NSInteger)index
 {
     NSString * title = nil;
-    if ([self.dataSource respondsToSelector:@selector(wya_pageController:titleAtIndex:)]) {
-        title = [self.dataSource wya_pageController:self titleAtIndex:index];
+    if ([self.dataSource respondsToSelector:@selector(ll_pageController:titleAtIndex:)]) {
+        title = [self.dataSource ll_pageController:self titleAtIndex:index];
     } else {
         title = self.titles[index];
     }
@@ -420,7 +420,7 @@ static NSInteger const kWMControllerCountUndefined = -1;
     NSDictionary * info = @{ @"index" : @(index),
                              @"title" : [self titleAtIndex:index] };
     [[NSNotificationCenter defaultCenter]
-    postNotificationName:WYAControllerDidAddToSuperViewNotification
+    postNotificationName:LLControllerDidAddToSuperViewNotification
                   object:self
                 userInfo:info];
 }
@@ -435,7 +435,7 @@ static NSInteger const kWMControllerCountUndefined = -1;
     NSDictionary * info = @{ @"index" : @(index),
                              @"title" : [self titleAtIndex:index] };
     [[NSNotificationCenter defaultCenter]
-    postNotificationName:WYAControllerDidFullyDisplayedNotification
+    postNotificationName:LLControllerDidFullyDisplayedNotification
                   object:self
                 userInfo:info];
 }
@@ -460,23 +460,23 @@ static NSInteger const kWMControllerCountUndefined = -1;
     _markedSelectIndex        = kWMUndefinedIndex;
     _controllerCount          = kWMControllerCountUndefined;
     _scrollEnable             = YES;
-    _progressViewCornerRadius = WYAUNDEFINED_VALUE;
-    _progressHeight           = WYAUNDEFINED_VALUE;
+    _progressViewCornerRadius = LLUNDEFINED_VALUE;
+    _progressHeight           = LLUNDEFINED_VALUE;
 
     self.automaticallyCalculatesItemWidths    = NO;
     self.automaticallyAdjustsScrollViewInsets = NO;
-    self.preloadPolicy                        = WYAPageControllerPreloadPolicyNever;
-    self.cachePolicy                          = WYAPageControllerCachePolicyNoLimit;
+    self.preloadPolicy                        = LLPageControllerPreloadPolicyNever;
+    self.cachePolicy                          = LLPageControllerCachePolicyNoLimit;
 
     self.delegate   = self;
     self.dataSource = self;
 
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(wya_willResignActive:)
+                                             selector:@selector(ll_willResignActive:)
                                                  name:UIApplicationWillResignActiveNotification
                                                object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(wya_willEnterForeground:)
+                                             selector:@selector(ll_willEnterForeground:)
                                                  name:UIApplicationWillEnterForegroundNotification
                                                object:nil];
 }
@@ -487,10 +487,10 @@ static NSInteger const kWMControllerCountUndefined = -1;
 - (void)calculateSize
 {
     _menuViewFrame =
-    [self.dataSource wya_pageController:self
+    [self.dataSource ll_pageController:self
               preferredFrameForMenuView:self.menuView];
     _contentViewFrame =
-    [self.dataSource wya_pageController:self
+    [self.dataSource ll_pageController:self
               preferredFrameContentView:self.scrollView];
     _childViewFrames = [NSMutableArray array];
     for (int i = 0; i < self.childControllersCount; i++) {
@@ -502,7 +502,7 @@ static NSInteger const kWMControllerCountUndefined = -1;
 
 - (void)addScrollView
 {
-    WYAPageScrollView * scrollView            = [[WYAPageScrollView alloc] init];
+    LLPageScrollView * scrollView            = [[LLPageScrollView alloc] init];
     scrollView.scrollsToTop                   = NO;
     scrollView.pagingEnabled                  = YES;
     scrollView.backgroundColor                = [UIColor whiteColor];
@@ -527,7 +527,7 @@ static NSInteger const kWMControllerCountUndefined = -1;
 }
 - (void)addMenuView
 {
-    WYAMenuView * menuView            = [[WYAMenuView alloc] initWithFrame:CGRectZero];
+    LLMenuView * menuView            = [[LLMenuView alloc] initWithFrame:CGRectZero];
     menuView.delegate                 = self;
     menuView.dataSource               = self;
     menuView.style                    = self.menuViewStyle;
@@ -648,7 +648,7 @@ static NSInteger const kWMControllerCountUndefined = -1;
     [self.displayVC removeObjectForKey:@(index)];
 
     // 放入缓存
-    if (self.cachePolicy == WYAPageControllerCachePolicyDisabled) {
+    if (self.cachePolicy == LLPageControllerCachePolicyDisabled) {
         return;
     }
 
@@ -722,19 +722,19 @@ static NSInteger const kWMControllerCountUndefined = -1;
     if (!self.menuView) {
         [self addMenuView];
     } else {
-        [self.menuView wya_reload];
+        [self.menuView ll_reload];
         if (self.menuView.userInteractionEnabled == NO) {
             self.menuView.userInteractionEnabled = YES;
         }
         if (self.selectIndex != 0) {
-            [self.menuView wya_selectItemAtIndex:self.selectIndex];
+            [self.menuView ll_selectItemAtIndex:self.selectIndex];
         }
         [self.view bringSubviewToFront:self.menuView];
     }
 }
 - (void)growCachePolicyAfterMemoryWarning
 {
-    self.cachePolicy = WYAPageControllerCachePolicyBalanced;
+    self.cachePolicy = LLPageControllerCachePolicyBalanced;
     [self performSelector:@selector(growCachePolicyToHigh)
                withObject:nil
                afterDelay:2.0
@@ -743,7 +743,7 @@ static NSInteger const kWMControllerCountUndefined = -1;
 
 - (void)growCachePolicyToHigh
 {
-    self.cachePolicy = WYAPageControllerCachePolicyHigh;
+    self.cachePolicy = LLPageControllerCachePolicyHigh;
 }
 #pragma mark ======= Adjust Frame
 - (void)adjustScrollViewFrame
@@ -780,9 +780,9 @@ static NSInteger const kWMControllerCountUndefined = -1;
 {
     CGFloat oriWidth    = self.menuView.frame.size.width;
     self.menuView.frame = _menuViewFrame;
-    [self.menuView wya_resetFrames];
+    [self.menuView ll_resetFrames];
     if (oriWidth != self.menuView.frame.size.width) {
-        [self.menuView wya_refreshContentOffset];
+        [self.menuView ll_refreshContentOffset];
     }
 }
 
@@ -828,7 +828,7 @@ static NSInteger const kWMControllerCountUndefined = -1;
     [super viewDidLayoutSubviews];
 
     if (!self.childControllersCount) return;
-    [self wya_forceLayoutSubviews];
+    [self ll_forceLayoutSubviews];
     _hasInited = YES;
     [self delaySelectIndexIfNeeded];
 }
@@ -838,7 +838,7 @@ static NSInteger const kWMControllerCountUndefined = -1;
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
     self.memoryWarningCount++;
-    self.cachePolicy = WYAPageControllerCachePolicyLowMemory;
+    self.cachePolicy = LLPageControllerCachePolicyLowMemory;
     // 取消正在增长的 cache 操作
     [NSObject cancelPreviousPerformRequestsWithTarget:self
                                              selector:@selector(growCachePolicyAfterMemoryWarning)
@@ -862,7 +862,7 @@ static NSInteger const kWMControllerCountUndefined = -1;
 #pragma mark - UIScrollView Delegate
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
-    if (![scrollView isKindOfClass:WYAPageScrollView.class]) return;
+    if (![scrollView isKindOfClass:LLPageScrollView.class]) return;
 
     if (_shouldNotScroll || !_hasInited) return;
 
@@ -876,7 +876,7 @@ static NSInteger const kWMControllerCountUndefined = -1;
             contentOffsetX = scrollView.contentSize.width - _contentViewFrame.size.width;
         }
         CGFloat rate = contentOffsetX / _contentViewFrame.size.width;
-        [self.menuView wya_slidMenuAtProgress:rate];
+        [self.menuView ll_slidMenuAtProgress:rate];
     }
 
     // Fix scrollView.contentOffset.y -> (-20) unexpectedly.
@@ -888,7 +888,7 @@ static NSInteger const kWMControllerCountUndefined = -1;
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
 {
-    if (![scrollView isKindOfClass:WYAPageScrollView.class]) return;
+    if (![scrollView isKindOfClass:LLPageScrollView.class]) return;
 
     _startDragging                       = YES;
     self.menuView.userInteractionEnabled = NO;
@@ -896,33 +896,33 @@ static NSInteger const kWMControllerCountUndefined = -1;
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
-    if (![scrollView isKindOfClass:WYAPageScrollView.class]) return;
+    if (![scrollView isKindOfClass:LLPageScrollView.class]) return;
 
     self.menuView.userInteractionEnabled = YES;
     _selectIndex                         = (int)(scrollView.contentOffset.x / _contentViewFrame.size.width);
     self.currentViewController           = self.displayVC[@(self.selectIndex)];
     [self didEnterController:self.currentViewController atIndex:self.selectIndex];
-    [self.menuView wya_deselectedItemsIfNeeded];
+    [self.menuView ll_deselectedItemsIfNeeded];
 }
 
 - (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView
 {
-    if (![scrollView isKindOfClass:WYAPageScrollView.class]) return;
+    if (![scrollView isKindOfClass:LLPageScrollView.class]) return;
 
     self.currentViewController = self.displayVC[@(self.selectIndex)];
     [self didEnterController:self.currentViewController atIndex:self.selectIndex];
-    [self.menuView wya_deselectedItemsIfNeeded];
+    [self.menuView ll_deselectedItemsIfNeeded];
 }
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
 {
-    if (![scrollView isKindOfClass:WYAPageScrollView.class]) return;
+    if (![scrollView isKindOfClass:LLPageScrollView.class]) return;
 
     if (!decelerate) {
         self.menuView.userInteractionEnabled = YES;
         CGFloat rate                         = _targetX / _contentViewFrame.size.width;
-        [self.menuView wya_slidMenuAtProgress:rate];
-        [self.menuView wya_deselectedItemsIfNeeded];
+        [self.menuView ll_slidMenuAtProgress:rate];
+        [self.menuView ll_deselectedItemsIfNeeded];
     }
 }
 
@@ -930,12 +930,12 @@ static NSInteger const kWMControllerCountUndefined = -1;
                      withVelocity:(CGPoint)velocity
               targetContentOffset:(inout CGPoint *)targetContentOffset
 {
-    if (![scrollView isKindOfClass:WYAPageScrollView.class]) return;
+    if (![scrollView isKindOfClass:LLPageScrollView.class]) return;
 
     _targetX = targetContentOffset->x;
 }
-#pragma mark ======= WYAMenuView Delegate
-- (void)wya_menuView:(WYAMenuView *)menu
+#pragma mark ======= LLMenuView Delegate
+- (void)ll_menuView:(LLMenuView *)menu
     didSelectedIndex:(NSInteger)index
         currentINdex:(NSInteger)currentIndex
 {
@@ -956,7 +956,7 @@ static NSInteger const kWMControllerCountUndefined = -1;
     [self didEnterController:self.currentViewController atIndex:index];
 }
 
-- (CGFloat)wya_menuView:(WYAMenuView *)menu widthForItemAtIndex:(NSInteger)index
+- (CGFloat)ll_menuView:(LLMenuView *)menu widthForItemAtIndex:(NSInteger)index
 {
     if (self.automaticallyCalculatesItemWidths) {
         return [self calculateItemWithAtIndex:index];
@@ -968,7 +968,7 @@ static NSInteger const kWMControllerCountUndefined = -1;
     return self.menuItemWidth;
 }
 
-- (CGFloat)wya_menuView:(WYAMenuView *)menu itemMarginAtIndex:(NSInteger)index
+- (CGFloat)ll_menuView:(LLMenuView *)menu itemMarginAtIndex:(NSInteger)index
 {
     if (self.itemsMargins.count == self.childControllersCount + 1) {
         return [self.itemsMargins[index] floatValue];
@@ -976,41 +976,41 @@ static NSInteger const kWMControllerCountUndefined = -1;
     return self.itemMargin;
 }
 
-- (CGFloat)wya_menuView:(WYAMenuView *)menu
-      titleSizeForState:(WYAMenuItemState)state
+- (CGFloat)ll_menuView:(LLMenuView *)menu
+      titleSizeForState:(LLMenuItemState)state
                 atIndex:(NSInteger)index
 {
     switch (state) {
-        case WYAMenuItemStateSelected:
+        case LLMenuItemStateSelected:
             return self.titleSizeSelected;
-        case WYAMenuItemStateNormal:
+        case LLMenuItemStateNormal:
             return self.titleSizeNormal;
     }
 }
-- (UIColor *)wya_menuView:(WYAMenuView *)menu
-       titleColorForState:(WYAMenuItemState)state
+- (UIColor *)ll_menuView:(LLMenuView *)menu
+       titleColorForState:(LLMenuItemState)state
                   atIndex:(NSInteger)index
 {
     switch (state) {
-        case WYAMenuItemStateSelected:
+        case LLMenuItemStateSelected:
             return self.titleColorSelected;
-        case WYAMenuItemStateNormal:
+        case LLMenuItemStateNormal:
             return self.titleColorNormal;
     }
 }
-#pragma mark - WYAMenuViewDataSource
-- (NSInteger)wya_numbersOfTitlesInMenuView:(WYAMenuView *)menu
+#pragma mark - LLMenuViewDataSource
+- (NSInteger)ll_numbersOfTitlesInMenuView:(LLMenuView *)menu
 {
     return self.childControllersCount;
 }
 
-- (NSString *)wya_menuView:(WYAMenuView *)menu titleAtIndex:(NSInteger)index
+- (NSString *)ll_menuView:(LLMenuView *)menu titleAtIndex:(NSInteger)index
 {
     return [self titleAtIndex:index];
 }
-#pragma mark - WYAPageControllerDataSource
-- (CGRect)wya_pageController:(WYAPageController *)pageController
-   preferredFrameForMenuView:(WYAMenuView *)menuView
+#pragma mark - LLPageControllerDataSource
+- (CGRect)ll_pageController:(LLPageController *)pageController
+   preferredFrameForMenuView:(LLMenuView *)menuView
 {
     NSAssert(0,
              @"[%@] MUST IMPLEMENT DATASOURCE METHOD `-pageController:preferredFrameForMenuView:`",
@@ -1018,8 +1018,8 @@ static NSInteger const kWMControllerCountUndefined = -1;
     return CGRectZero;
 }
 
-- (CGRect)wya_pageController:(WYAPageController *)pageController
-preferredFrameForContentView:(WYAPageScrollView *)contentView
+- (CGRect)ll_pageController:(LLPageController *)pageController
+preferredFrameForContentView:(LLPageScrollView *)contentView
 {
     NSAssert(
     0, @"[%@] MUST IMPLEMENT DATASOURCE METHOD `-pageController:preferredFrameForContentView:`",

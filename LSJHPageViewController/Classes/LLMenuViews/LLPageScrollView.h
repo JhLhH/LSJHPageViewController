@@ -1,5 +1,5 @@
 //
-//  WYAPageScrollView.h
+//  LLPageScrollView.h
 //  FMDB
 //
 //  Created by 李俊恒 on 2018/11/14.
@@ -9,7 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface WYAPageScrollView : UIScrollView <UIGestureRecognizerDelegate>
+@interface LLPageScrollView : UIScrollView <UIGestureRecognizerDelegate>
 
 @end
 
